@@ -1,6 +1,6 @@
 set(files)
 
-if(PY_VERSION VERSION_GREATER_EQUAL "3.6")
+if(PY_VERSION VERSION_GREATER_EQUAL "3.6" AND PY_VERSION VERSION_LESS_EQUAL "3.12")
 list(APPEND files
   Tools/scripts/run_tests.py
 )

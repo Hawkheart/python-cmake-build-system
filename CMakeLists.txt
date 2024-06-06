@@ -484,6 +484,16 @@ else()
     endif()
 endif()
 
+if(PY_VERSION VERSION_GREATER_EQUAL "3.13")
+    option(WITH_FREE_THREADING "Build interpreter in experimental free-threaded mode" OFF)
+    option(WITH_MIMALLOC "Build interpreter with mimalloc allocator" ON)
+    option(WITH_FREELISTS "Build interpreter with freelists" ON)
+else()
+    if(DEFINED WITH_FREE_THREADING)
+        message(AUTHOR_WARNING "Free threading is not supported in Python < 3.13.")
+    endif()
+endif()
+
 # This is the major version number of Python
 if(WIN32)
     set(LIBPYTHON_VERSION ${PY_VERSION_MAJOR}${PY_VERSION_MINOR})
@@ -582,6 +592,7 @@ endif()
 # Set include directories
 include_directories(${INCLUDE_BUILD_DIR})
 include_directories(${INCLUDE_BUILD_DIR}/internal)
+include_directories(${INCLUDE_BUILD_DIR}/internal/mimalloc)
 include_directories(${PYCONFIG_BUILD_DIR})
 include_directories(${SRC_DIR}/Python)
 

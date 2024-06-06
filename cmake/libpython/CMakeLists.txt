@@ -85,12 +85,28 @@ if(PY_VERSION VERSION_GREATER_EQUAL "3.10")
         ${SRC_DIR}/Parser/pegen.c
         ${SRC_DIR}/Parser/string_parser.c
         ${SRC_DIR}/Parser/token.c
-        ${SRC_DIR}/Parser/tokenizer.c
     )
     if(PY_VERSION VERSION_GREATER_EQUAL "3.11")
         list(APPEND PARSER_COMMON_SOURCES
             ${SRC_DIR}/Parser/action_helpers.c
             ${SRC_DIR}/Parser/pegen_errors.c
+        )
+    endif()
+    if (PY_VERSION VERSION_GREATER_EQUAL "3.13")
+        list(APPEND PARSER_COMMON_SOURCES
+            ${SRC_DIR}/Parser/tokenizer/readline_tokenizer.c
+            ${SRC_DIR}/Parser/tokenizer/file_tokenizer.c
+            ${SRC_DIR}/Parser/tokenizer/utf8_tokenizer.c
+            ${SRC_DIR}/Parser/tokenizer/string_tokenizer.c
+            ${SRC_DIR}/Parser/tokenizer/helpers.c
+            ${SRC_DIR}/Parser/lexer/buffer.c
+            ${SRC_DIR}/Parser/lexer/lexer.c
+            ${SRC_DIR}/Parser/lexer/state.c
+        )
+    else()
+        # File removed in 3.13
+        list(APPEND PARSER_COMMON_SOURCES
+            ${SRC_DIR}/Parser/tokenizer.c
         )
     endif()
 else()
@@ -205,9 +221,13 @@ set(OBJECT_COMMON_SOURCES # Equivalent to OBJECT_OBJS in Makefile.pre
     ${SRC_DIR}/Objects/unicodeobject.c
     ${SRC_DIR}/Objects/weakrefobject.c
 )
-if(PY_VERSION VERSION_GREATER_EQUAL "3.8")
+if(PY_VERSION VERSION_GREATER_EQUAL "3.8" AND PY_VERSION VERSION_LESS "3.13")
     list(APPEND OBJECT_COMMON_SOURCES
         ${SRC_DIR}/Objects/interpreteridobject.c
+    )
+endif()
+if(PY_VERSION VERSION_GREATER_EQUAL "3.8")
+    list(APPEND OBJECT_COMMON_SOURCES
         ${SRC_DIR}/Objects/picklebufobject.c
     )
 endif()
@@ -381,6 +401,26 @@ if(PY_VERSION VERSION_GREATER_EQUAL "3.12")
         ${SRC_DIR}/Python/tracemalloc.c
     )
 endif()
+if(PY_VERSION VERSION_GREATER_EQUAL "3.13")
+    list(APPEND PYTHON_COMMON_SOURCES
+        ${SRC_DIR}/Python/brc.c
+        ${SRC_DIR}/Python/crossinterp.c
+        ${SRC_DIR}/Python/critical_section.c
+        ${SRC_DIR}/Python/gc.c
+        ${SRC_DIR}/Python/gc_gil.c
+        ${SRC_DIR}/Python/gc_free_threading.c
+        ${SRC_DIR}/Python/instruction_sequence.c
+        ${SRC_DIR}/Python/lock.c
+        ${SRC_DIR}/Python/parking_lot.c
+        ${SRC_DIR}/Python/qsbr.c
+        ${SRC_DIR}/Python/object_stack.c
+        ${SRC_DIR}/Python/interpconfig.c
+        ${SRC_DIR}/Python/jit.c
+        ${SRC_DIR}/Python/optimizer.c
+        ${SRC_DIR}/Python/optimizer_analysis.c
+        ${SRC_DIR}/Python/optimizer_symbols.c
+    )
+endif()
 
 if(UNIX)
     list(APPEND PYTHON_COMMON_SOURCES
@@ -544,7 +584,7 @@ endif()
 
 set(LIBPYTHON_FROZEN_SOURCES )
 set(LIBPYTHON_DEEPFREEZE_SOURCES )
-if(PY_VERSION VERSION_GREATER_EQUAL "3.11")
+if(PY_VERSION VERSION_GREATER_EQUAL "3.11" AND PY_VERSION VERSION_LESS "3.13")
   set(LIBPYTHON_DEEPFREEZE_SOURCES
     ${SRC_DIR}/Python/deepfreeze/deepfreeze.c
   )
@@ -811,38 +851,40 @@ else()
   else()
     set(DEEPFREEZE_PY ${SRC_DIR}/Tools/scripts/deepfreeze.py)
   endif()
-  add_custom_command(
-    OUTPUT ${LIBPYTHON_DEEPFREEZE_SOURCES}
-    COMMAND
-      ${Python3_EXECUTABLE} ${DEEPFREEZE_PY}
-        "${SRC_DIR}/Python/frozen_modules/importlib._bootstrap.h:importlib._bootstrap"
-        "${SRC_DIR}/Python/frozen_modules/importlib._bootstrap_external.h:importlib._bootstrap_external"
-        "${SRC_DIR}/Python/frozen_modules/zipimport.h:zipimport"
-        "${SRC_DIR}/Python/frozen_modules/abc.h:abc"
-        "${SRC_DIR}/Python/frozen_modules/codecs.h:codecs"
-        "${SRC_DIR}/Python/frozen_modules/io.h:io"
-        "${SRC_DIR}/Python/frozen_modules/_collections_abc.h:_collections_abc"
-        "${SRC_DIR}/Python/frozen_modules/_sitebuiltins.h:_sitebuiltins"
-        "${SRC_DIR}/Python/frozen_modules/genericpath.h:genericpath"
-        "${SRC_DIR}/Python/frozen_modules/ntpath.h:ntpath"
-        "${SRC_DIR}/Python/frozen_modules/posixpath.h:posixpath"
-        "${SRC_DIR}/Python/frozen_modules/os.h:os"
-        "${SRC_DIR}/Python/frozen_modules/site.h:site"
-        "${SRC_DIR}/Python/frozen_modules/stat.h:stat"
-        "${SRC_DIR}/Python/frozen_modules/importlib.util.h:importlib.util"
-        "${SRC_DIR}/Python/frozen_modules/importlib.machinery.h:importlib.machinery"
-        "${SRC_DIR}/Python/frozen_modules/runpy.h:runpy"
-        "${SRC_DIR}/Python/frozen_modules/__hello__.h:__hello__"
-        "${SRC_DIR}/Python/frozen_modules/__phello__.h:__phello__"
-        "${SRC_DIR}/Python/frozen_modules/__phello__.ham.h:__phello__.ham"
-        "${SRC_DIR}/Python/frozen_modules/__phello__.ham.eggs.h:__phello__.ham.eggs"
-        "${SRC_DIR}/Python/frozen_modules/__phello__.spam.h:__phello__.spam"
-        "${SRC_DIR}/Python/frozen_modules/frozen_only.h:frozen_only"
-        "-o" "${LIBPYTHON_DEEPFREEZE_SOURCES}"
-    DEPENDS
-      ${DEEPFREEZE_PY}
-      ${LIBPYTHON_FROZEN_SOURCES}
-  )
+  if(PY_VERSION VERSION_LESS "3.13")
+    add_custom_command(
+        OUTPUT ${LIBPYTHON_DEEPFREEZE_SOURCES}
+        COMMAND
+        ${Python3_EXECUTABLE} ${DEEPFREEZE_PY}
+            "${SRC_DIR}/Python/frozen_modules/importlib._bootstrap.h:importlib._bootstrap"
+            "${SRC_DIR}/Python/frozen_modules/importlib._bootstrap_external.h:importlib._bootstrap_external"
+            "${SRC_DIR}/Python/frozen_modules/zipimport.h:zipimport"
+            "${SRC_DIR}/Python/frozen_modules/abc.h:abc"
+            "${SRC_DIR}/Python/frozen_modules/codecs.h:codecs"
+            "${SRC_DIR}/Python/frozen_modules/io.h:io"
+            "${SRC_DIR}/Python/frozen_modules/_collections_abc.h:_collections_abc"
+            "${SRC_DIR}/Python/frozen_modules/_sitebuiltins.h:_sitebuiltins"
+            "${SRC_DIR}/Python/frozen_modules/genericpath.h:genericpath"
+            "${SRC_DIR}/Python/frozen_modules/ntpath.h:ntpath"
+            "${SRC_DIR}/Python/frozen_modules/posixpath.h:posixpath"
+            "${SRC_DIR}/Python/frozen_modules/os.h:os"
+            "${SRC_DIR}/Python/frozen_modules/site.h:site"
+            "${SRC_DIR}/Python/frozen_modules/stat.h:stat"
+            "${SRC_DIR}/Python/frozen_modules/importlib.util.h:importlib.util"
+            "${SRC_DIR}/Python/frozen_modules/importlib.machinery.h:importlib.machinery"
+            "${SRC_DIR}/Python/frozen_modules/runpy.h:runpy"
+            "${SRC_DIR}/Python/frozen_modules/__hello__.h:__hello__"
+            "${SRC_DIR}/Python/frozen_modules/__phello__.h:__phello__"
+            "${SRC_DIR}/Python/frozen_modules/__phello__.ham.h:__phello__.ham"
+            "${SRC_DIR}/Python/frozen_modules/__phello__.ham.eggs.h:__phello__.ham.eggs"
+            "${SRC_DIR}/Python/frozen_modules/__phello__.spam.h:__phello__.spam"
+            "${SRC_DIR}/Python/frozen_modules/frozen_only.h:frozen_only"
+            "-o" "${LIBPYTHON_DEEPFREEZE_SOURCES}"
+        DEPENDS
+        ${DEEPFREEZE_PY}
+        ${LIBPYTHON_FROZEN_SOURCES}
+    )
+  endif()
 endif()
 
 # This is a convenience target allowing to regenerate
@@ -943,12 +985,16 @@ if(PY_VERSION VERSION_GREATER_EQUAL "3.12")
         ${SRC_DIR}/Modules/_hacl/Hacl_Hash_SHA1.c
         ${SRC_DIR}/Modules/_hacl/Hacl_Hash_SHA2.c
         ${SRC_DIR}/Modules/_hacl/Hacl_Hash_SHA3.c
-        ${SRC_DIR}/Modules/_xxinterpchannelsmodule.c
         ${SRC_DIR}/Modules/md5module.c
         ${SRC_DIR}/Modules/sha1module.c
         ${SRC_DIR}/Modules/sha2module.c
         ${SRC_DIR}/Modules/sha3module.c
     )
+    if(PY_VERSION VERSION_LESS "3.13")
+        list(APPEND LIBPYTHON_SOURCES
+            ${SRC_DIR}/Modules/__xxinterpchannelsmodule.c
+        )
+    endif()
 endif()
 
 # Build python libraries

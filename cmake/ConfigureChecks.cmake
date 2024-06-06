@@ -325,6 +325,7 @@ check_include_files(memory.h HAVE_MEMORY_H) # libffi and cpython
 check_include_files(minix/config.h HAVE_MINIX_CONFIG_H)
 check_include_files(ncurses.h HAVE_NCURSES_H)
 check_include_files(ncurses/panel.h HAVE_NCURSES_PANEL_H)
+check_include_files(net/ethernet.h HAVE_NET_ETHERNET_H)
 check_include_files(netdb.h HAVE_NETDB_H)
 check_include_files(netinet/in.h HAVE_NETINET_IN_H)
 check_include_files(netpacket/packet.h HAVE_NETPACKET_PACKET_H)
@@ -344,18 +345,22 @@ check_include_files(shadow.h HAVE_SHADOW_H)
 check_include_files(signal.h HAVE_SIGNAL_H)
 check_include_files(spawn.h HAVE_SPAWN_H)
 check_include_files(stdint.h HAVE_STDINT_H)   # libffi and cpython
+check_include_files(stdio.h HAVE_STDIO_H)
 check_include_files(stdlib.h HAVE_STDLIB_H)   # libffi and cpython
 check_include_files(strings.h HAVE_STRINGS_H) # libffi and cpython
 check_include_files(string.h HAVE_STRING_H)   # libffi and cpython
 check_include_files(stropts.h HAVE_STROPTS_H)
 check_include_files(sysexits.h HAVE_SYSEXITS_H)
 check_include_files(sys/audioio.h HAVE_SYS_AUDIOIO_H)
+check_include_files(sys/auxv.h HAVE_SYS_AUXV_H)
 check_include_files(sys/bsdtty.h HAVE_SYS_BSDTTY_H)
 check_include_files(sys/epoll.h HAVE_SYS_EPOLL_H)
 check_include_files(sys/event.h HAVE_SYS_EVENT_H)
+check_include_files(sys/eventfd.h HAVE_SYS_EVENTFD_H)
 check_include_files(sys/file.h HAVE_SYS_FILE_H)
 check_include_files(sys/loadavg.h HAVE_SYS_LOADAVG_H)
 check_include_files(sys/lock.h HAVE_SYS_LOCK_H)
+check_include_files(sys/soundcard.h HAVE_SYS_SOUNDCARD_H)
 check_include_files(sys/sysmacros.h HAVE_SYS_SYSMACROS_H)
 check_include_files(sys/mkdev.h HAVE_SYS_MKDEV_H)
 check_include_files(sys/mman.h HAVE_SYS_MMAN_H) # libffi and cpython
@@ -371,6 +376,7 @@ check_include_files(sys/timeb.h HAVE_SYS_TIMEB_H)
 check_include_files(sys/termio.h HAVE_SYS_TERMIO_H)
 check_include_files(sys/times.h HAVE_SYS_TIMES_H)
 check_include_files(sys/time.h HAVE_SYS_TIME_H)
+check_include_files(sys/timerfd.h HAVE_SYS_TIMERFD_H)
 check_include_files(sys/types.h HAVE_SYS_TYPES_H) # libffi and cpython
 check_include_files(sys/un.h HAVE_SYS_UN_H)
 check_include_files(sys/utsname.h HAVE_SYS_UTSNAME_H)
@@ -382,6 +388,7 @@ check_include_files(thread.h HAVE_THREAD_H)
 endif()
 check_include_files(unistd.h HAVE_UNISTD_H) # libffi and cpython
 check_include_files(util.h HAVE_UTIL_H)
+check_include_files(utmp.h HAVE_UTMP_H)
 check_include_files(utime.h HAVE_UTIME_H)
 check_include_files(wchar.h HAVE_WCHAR_H)
 check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS) # libffi and cpython
@@ -391,10 +398,17 @@ check_include_files(stdarg.h HAVE_STDARG_PROTOTYPES)
 if(IS_PY3)
 check_include_files(endian.h HAVE_ENDIAN_H)
 check_include_files(sched.h HAVE_SCHED_H)
+check_include_files(linux/auxvec.h HAVE_LINUX_AUXVEC_H)
+check_include_files(linux/fs.h HAVE_LINUX_FS_H)
+check_include_files(linux/limits.h HAVE_LINUX_LIMITS_H)
+check_include_files(linux/soundcard.h HAVE_LINUX_SOUNDCARD_H)
+check_include_files(linux/wait.h HAVE_LINUX_WAIT_H)
 check_include_files(linux/memfd.h HAVE_LINUX_MEMFD_H)
 check_include_files(linux/random.h HAVE_LINUX_RANDOM_H)
+check_include_files(setjmp.h HAVE_SETJMP_H)
 check_include_files(sys/devpoll.h HAVE_SYS_DEVPOLL_H)
 check_include_files(sys/endian.h HAVE_SYS_ENDIAN_H)
+check_include_files(sys/eventfd.h HAVE_SYS_EVENTFD_H)
 check_include_files(sys/ioctl.h HAVE_SYS_IOCTL_H)
 check_include_files(sys/memfd.h HAVE_SYS_MEMFD_H)
 check_include_files("sys/types.h;sys/kern_control.h" HAVE_SYS_KERN_CONTROL_H)
@@ -403,6 +417,7 @@ check_include_files(sys/syscall.h HAVE_SYS_SYSCALL_H)
 check_include_files(sys/sys_domain.h HAVE_SYS_SYS_DOMAIN_H)
 check_include_files(sys/uio.h HAVE_SYS_UIO_H)
 check_include_files(sys/xattr.h HAVE_SYS_XATTR_H)
+check_include_files(syslog.h HAVE_SYSLOG_H)
 
 # On Darwin (OS X) net/if.h requires sys/socket.h to be imported first.
 set(NET_IF_HEADERS stdio.h)
@@ -441,6 +456,7 @@ else()
 endif()
 
 find_library(HAVE_LIBNCURSES ncurses)
+find_library(HAVE_NCURSESW ncursesw)
 find_library(HAVE_LIBNSL nsl)
 find_library(HAVE_LIBREADLINE readline)
 if(USE_LIBEDIT)
@@ -739,6 +755,9 @@ check_type_size("void *" SIZEOF_VOID_P)
 check_type_size(wchar_t SIZEOF_WCHAR_T)
 check_type_size(_Bool SIZEOF__BOOL)
 set(HAVE_C99_BOOL ${SIZEOF__BOOL})
+# TODO for 3.13 - this isn't actually correct
+# the other ALIGNOF_ above are incorrect too...
+check_type_size(max_align_t ALIGNOF_MAX_ALIGN_T)
 
 # libffi specific: Check whether more than one size of the long double type is supported
 # TODO
@@ -769,6 +788,7 @@ set(CFG_HEADERS )
 
 add_cond(CFG_HEADERS HAVE_SYS_EPOLL_H sys/epoll.h)
 add_cond(CFG_HEADERS HAVE_SYS_EVENT_H sys/event.h)
+add_cond(CFG_HEADERS HAVE_SYS_EVENTFD_H sys/eventfd.h)
 add_cond(CFG_HEADERS HAVE_SYS_RANDOM_H sys/random.h)
 add_cond(CFG_HEADERS HAVE_SYS_SYSMACROS_H sys/sysmacros.h)
 add_cond(CFG_HEADERS HAVE_SYS_TYPES_H sys/types.h)
@@ -814,6 +834,8 @@ add_cond(CFG_HEADERS HAVE_SYS_MEMFD_H sys/memfd.h)
 add_cond(CFG_HEADERS HAVE_SYS_RESOURCE_H sys/resource.h)
 add_cond(CFG_HEADERS HAVE_SYS_SENDFILE_H sys/sendfile.h)
 add_cond(CFG_HEADERS HAVE_SYS_TIME_H sys/time.h)
+add_cond(CFG_HEADERS HAVE_SPAWN_H spawn.h)
+add_cond(CFG_HEADERS HAVE_SYS_TIMERFD_H sys/timerfd.h)
 endif()
 
 if(HAVE_PTY_H)
@@ -888,13 +910,19 @@ python_check_function(getpriority HAVE_GETPRIORITY)
 check_symbol_exists(getpwent     "${CFG_HEADERS}" HAVE_GETPWENT)
 check_symbol_exists(getresgid    "${CFG_HEADERS}" HAVE_GETRESGID)
 check_symbol_exists(getresuid    "${CFG_HEADERS}" HAVE_GETRESUID)
+check_symbol_exists(getrusage    "${CFG_HEADERS}" HAVE_GETRUSAGE)
 check_symbol_exists(getsid       "${CFG_HEADERS}" HAVE_GETSID)
 check_symbol_exists(getsockname  "${CFG_HEADERS}" HAVE_GETSOCKNAME)
 check_symbol_exists(getspent     "${CFG_HEADERS}" HAVE_GETSPENT)
 check_symbol_exists(getspnam     "${CFG_HEADERS}" HAVE_GETSPNAM)
-check_symbol_exists(gettimeofday "${CFG_HEADERS}" HAVE_GETTIMEOFDAY)
+if(PY_VERSION VERSION_LESS "3.13")
+  # This check was removed from the 3.13 beta configure script.
+  # Yet defining it causes Python compilation to fail...
+  check_symbol_exists(gettimeofday "${CFG_HEADERS}" HAVE_GETTIMEOFDAY)
+endif()
 check_symbol_exists(getuid       "${CFG_HEADERS}" HAVE_GETUID)
 check_symbol_exists(getwd        "${CFG_HEADERS}" HAVE_GETWD)
+check_symbol_exists(grantpt        "${CFG_HEADERS}" HAVE_GRANTPT)
 check_symbol_exists(hypot        "${CFG_HEADERS}" HAVE_HYPOT)
 check_symbol_exists(initgroups   "${CFG_HEADERS}" HAVE_INITGROUPS)
 check_symbol_exists(kill         "${CFG_HEADERS}" HAVE_KILL)
@@ -917,6 +945,7 @@ check_symbol_exists(mremap       "${CFG_HEADERS}" HAVE_MREMAP)
 check_symbol_exists(nice         "${CFG_HEADERS}" HAVE_NICE)
 check_symbol_exists(opendir      "${CFG_HEADERS}" HAVE_OPENDIR)
 check_symbol_exists(openpty      "${CFG_HEADERS}" HAVE_OPENPTY)
+check_symbol_exists(login_tty    "${CFG_HEADERS}" HAVE_LOGIN_TTY)
 check_symbol_exists(pathconf     "${CFG_HEADERS}" HAVE_PATHCONF)
 check_symbol_exists(pause        "${CFG_HEADERS}" HAVE_PAUSE)
 check_symbol_exists(plock        "${CFG_HEADERS}" HAVE_PLOCK)
@@ -933,6 +962,7 @@ check_symbol_exists(setgid       "${CFG_HEADERS}" HAVE_SETGID)
 check_symbol_exists(setgroups    "${CFG_HEADERS}" HAVE_SETGROUPS)
 check_symbol_exists(setitimer    "${CFG_HEADERS}" HAVE_SETITIMER)
 check_symbol_exists(setlocale    "${CFG_HEADERS}" HAVE_SETLOCALE)
+check_symbol_exists(setns        "${CFG_HEADERS}" HAVE_SETNS)
 check_symbol_exists(setpgid      "${CFG_HEADERS}" HAVE_SETPGID)
 check_symbol_exists(setpgrp      "${CFG_HEADERS}" HAVE_SETPGRP)
 check_symbol_exists(setregid     "${CFG_HEADERS}" HAVE_SETREGID)
@@ -950,6 +980,7 @@ check_symbol_exists(sigrelse     "${CFG_HEADERS}" HAVE_SIGRELSE)
 check_symbol_exists(snprintf     "${CFG_HEADERS}" HAVE_SNPRINTF)
 check_symbol_exists(socket       "${CFG_HEADERS}" HAVE_SOCKET)
 check_symbol_exists(socketpair   "${CFG_HEADERS}" HAVE_SOCKETPAIR)
+check_symbol_exists(splice       "${CFG_HEADERS}" HAVE_SPLICE)
 check_symbol_exists(statvfs      "${CFG_HEADERS}" HAVE_STATVFS)
 check_symbol_exists(strdup       "${CFG_HEADERS}" HAVE_STRDUP)
 check_symbol_exists(strftime     "${CFG_HEADERS}" HAVE_STRFTIME)
@@ -960,6 +991,7 @@ check_symbol_exists(tcgetpgrp    "${CFG_HEADERS}" HAVE_TCGETPGRP)
 check_symbol_exists(tcsetpgrp    "${CFG_HEADERS}" HAVE_TCSETPGRP)
 check_symbol_exists(tempnam      "${CFG_HEADERS}" HAVE_TEMPNAM)
 check_symbol_exists(timegm       "${CFG_HEADERS}" HAVE_TIMEGM)
+check_symbol_exists(timerfd_create "${CFG_HEADERS}" HAVE_TIMERFD_CREATE)
 check_symbol_exists(times        "${CFG_HEADERS}" HAVE_TIMES)
 check_symbol_exists(tmpfile      "${CFG_HEADERS}" HAVE_TMPFILE)
 check_symbol_exists(tmpnam       "${CFG_HEADERS}" HAVE_TMPNAM)
@@ -970,6 +1002,7 @@ check_symbol_exists(umask        "${CFG_HEADERS}" HAVE_UMASK)
 check_symbol_exists(uname        "${CFG_HEADERS}" HAVE_UNAME)
 check_symbol_exists(unsetenv     "${CFG_HEADERS}" HAVE_UNSETENV)
 check_symbol_exists(utimes       "${CFG_HEADERS}" HAVE_UTIMES)
+check_symbol_exists(vfork        "${CFG_HEADERS}" HAVE_VFORK)
 check_symbol_exists(wait         "${CFG_HEADERS}" HAVE_WAIT)
 check_symbol_exists(wait3        "${CFG_HEADERS}" HAVE_WAIT3)
 check_symbol_exists(wait4        "${CFG_HEADERS}" HAVE_WAIT4)
@@ -980,10 +1013,14 @@ check_symbol_exists(_getpty      "${CFG_HEADERS}" HAVE__GETPTY)
 if(IS_PY3)
 check_symbol_exists(accept       "${CFG_HEADERS}" HAVE_ACCEPT)
 check_symbol_exists(accept4      "${CFG_HEADERS}" HAVE_ACCEPT4)
+check_symbol_exists(closefrom    "${CFG_HEADERS}" HAVE_CLOSEFROM)
+check_symbol_exists(close_range    "${CFG_HEADERS}" HAVE_CLOSE_RANGE)
 check_symbol_exists(copy_file_range "${CFG_HEADERS}" HAVE_COPY_FILE_RANGE)
+check_symbol_exists(dup         "${CFG_HEADERS}" HAVE_DUP)
 check_symbol_exists(dup3         "${CFG_HEADERS}" HAVE_DUP3)
 check_symbol_exists(_dyld_shared_cache_contains_path "${CFG_HEADERS}" HAVE_DYLD_SHARED_CACHE_CONTAINS_PATH)
 check_symbol_exists(explicit_bzero  "${CFG_HEADERS}" HAVE_EXPLICIT_BZERO)
+check_symbol_exists(eventfd         "${CFG_HEADERS}" HAVE_EVENTFD)
 check_symbol_exists(explicit_memset "${CFG_HEADERS}" HAVE_EXPLICIT_MEMSET)
 check_symbol_exists(faccessat    "${CFG_HEADERS}" HAVE_FACCESSAT)
 check_symbol_exists(fchmodat     "${CFG_HEADERS}" HAVE_FCHMODAT)
@@ -997,10 +1034,15 @@ check_symbol_exists(futimes      "${CFG_HEADERS}" HAVE_FUTIMES)
 check_symbol_exists(futimesat    "${CFG_HEADERS}" HAVE_FUTIMESAT)
 check_symbol_exists(getentropy   "${CFG_HEADERS}" HAVE_GETENTROPY)
 python_check_function(getpriority HAVE_GETPRIORITY)
+check_symbol_exists(getegid      "${CFG_HEADERS}" HAVE_GETEGID)
+check_symbol_exists(geteuid      "${CFG_HEADERS}" HAVE_GETEUID)
+check_symbol_exists(getgrent     "${CFG_HEADERS}" HAVE_GETGRENT)
+check_symbol_exists(getgrgid     "${CFG_HEADERS}" HAVE_GETGRGID)
 check_symbol_exists(getgrgid_r   "${CFG_HEADERS}" HAVE_GETGRGID_R)
 check_symbol_exists(getgrnam_r   "${CFG_HEADERS}" HAVE_GETGRNAM_R)
 check_symbol_exists(getgrouplist "${CFG_HEADERS}" HAVE_GETGROUPLIST)
 check_symbol_exists(getpwnam_r   "${CFG_HEADERS}" HAVE_GETPWNAM_R)
+check_symbol_exists(getpwuid   "${CFG_HEADERS}" HAVE_GETPWUID)
 check_symbol_exists(getpwuid_r   "${CFG_HEADERS}" HAVE_GETPWUID_R)
 check_symbol_exists(htole64      "${CFG_HEADERS}" HAVE_HTOLE64)
 check_symbol_exists(if_nameindex "${CFG_HEADERS}" HAVE_IF_NAMEINDEX)
@@ -1019,11 +1061,14 @@ check_symbol_exists(pipe         "${CFG_HEADERS}" HAVE_PIPE)
 check_symbol_exists(pipe2        "${CFG_HEADERS}" HAVE_PIPE2)
 check_symbol_exists(posix_fadvise          "${CFG_HEADERS}" HAVE_POSIX_FADVISE)
 check_symbol_exists(posix_fallocate        "${CFG_HEADERS}" HAVE_POSIX_FALLOCATE)
+check_symbol_exists(posix_openpt           "${CFG_HEADERS}" HAVE_POSIX_OPENPT)
 check_symbol_exists(posix_spawn            "${CFG_HEADERS}" HAVE_POSIX_SPAWN)
 check_symbol_exists(posix_spawnp           "${CFG_HEADERS}" HAVE_POSIX_SPAWNP)
+check_symbol_exists(posix_spawn_file_actions_addclosefrom_np "${CFG_HEADERS}" HAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCLOSEFROM_NP)
 check_symbol_exists(pread                  "${CFG_HEADERS}" HAVE_PREAD)
 check_symbol_exists(preadv                 "${CFG_HEADERS}" HAVE_PREADV)
 check_symbol_exists(preadv2                "${CFG_HEADERS}" HAVE_PREADV2)
+check_symbol_exists(process_vm_readv       "${CFG_HEADERS}" HAVE_PROCESS_VM_READV)
 check_symbol_exists(prlimit                "${CFG_HEADERS}" HAVE_PRLIMIT)
 
 cmake_push_check_state()
@@ -1031,6 +1076,8 @@ list(APPEND CMAKE_REQUIRED_LIBRARIES pthread)
 check_symbol_exists(pthread_kill           "${CFG_HEADERS}" HAVE_PTHREAD_KILL)
 cmake_pop_check_state()
 
+check_symbol_exists(ptsname                "${CFG_HEADERS}" HAVE_PTSNAME)
+check_symbol_exists(ptsname_r              "${CFG_HEADERS}" HAVE_PTSNAME_R)
 check_symbol_exists(pwrite                 "${CFG_HEADERS}" HAVE_PWRITE)
 check_symbol_exists(pwritev                "${CFG_HEADERS}" HAVE_PWRITEV)
 check_symbol_exists(pwritev2               "${CFG_HEADERS}" HAVE_PWRITEV2)
@@ -1057,6 +1104,8 @@ check_symbol_exists(strlcpy                "${CFG_HEADERS}" HAVE_STRLCPY)
 check_symbol_exists(symlinkat              "${CFG_HEADERS}" HAVE_SYMLINKAT)
 check_symbol_exists(sync                   "${CFG_HEADERS}" HAVE_SYNC)
 check_symbol_exists(unlinkat               "${CFG_HEADERS}" HAVE_UNLINKAT)
+check_symbol_exists(unlockpt               "${CFG_HEADERS}" HAVE_UNLOCKPT)
+check_symbol_exists(unshare                "${CFG_HEADERS}" HAVE_UNSHARE)
 check_symbol_exists(utimensat              "${CFG_HEADERS}" HAVE_UTIMENSAT)
 check_symbol_exists(waitid                 "${CFG_HEADERS}" HAVE_WAITID)
 check_symbol_exists(wcsftime               "${CFG_HEADERS}" HAVE_WCSFTIME)
@@ -1079,7 +1128,7 @@ if(IS_PY3)
 check_struct_has_member("struct passwd" pw_gecos  "${CFG_HEADERS}" HAVE_STRUCT_PASSWD_PW_GECOS)
 check_struct_has_member("struct passwd" pw_passwd "${CFG_HEADERS}" HAVE_STRUCT_PASSWD_PW_PASSWD)
 
-check_struct_has_member("struct siginfo_t" si_band "${CFG_HEADERS}" HAVE_SIGINFO_T_SI_BAND)
+check_struct_has_member("siginfo_t" si_band "${CFG_HEADERS}" HAVE_SIGINFO_T_SI_BAND)
 endif()
 
 #######################################################################
@@ -1701,6 +1750,68 @@ if(NOT HAVE_CLOCK_SETTIME)
   endif()
 endif()
 
+cmake_push_check_state()
+check_symbol_exists(clock_nanosleep   "${CFG_HEADERS}" HAVE_CLOCK_NANOSLEEP)
+cmake_pop_check_state()
+if(NOT HAVE_CLOCK_NANOSLEEP)
+  cmake_push_check_state()
+  set(check_src ${PROJECT_BINARY_DIR}/CMakeFiles/ac_cv_lib_rt_clock_nanosleep.c)
+  file(WRITE ${check_src} "/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+   char clock_nanosleep ();
+   int
+   main (void)
+   {
+    return clock_nanosleep ();
+      ;
+      return 0;
+    }
+  ")
+  list(APPEND CMAKE_REQUIRED_LIBRARIES rt)
+  python_platform_test(
+    HAVE_CLOCK_NANOSLEEP
+    "Checking for clock_nanosleep in -lrt"
+    ${check_src}
+    DIRECT
+    )
+  cmake_pop_check_state()
+  if(HAVE_CLOCK_NANOSLEEP)
+    set(TIMEMODULE_LIB rt)
+  endif()
+endif()
+
+cmake_push_check_state()
+check_symbol_exists(nanosleep   "${CFG_HEADERS}" HAVE_NANOSLEEP)
+cmake_pop_check_state()
+if(NOT HAVE_NANOSLEEP)
+  cmake_push_check_state()
+  set(check_src ${PROJECT_BINARY_DIR}/CMakeFiles/ac_cv_lib_rt_clock_nanosleep.c)
+  file(WRITE ${check_src} "/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+   char nanosleep ();
+   int
+   main (void)
+   {
+    return nanosleep ();
+      ;
+      return 0;
+    }
+  ")
+  list(APPEND CMAKE_REQUIRED_LIBRARIES rt)
+  python_platform_test(
+    HAVE_NANOSLEEP
+    "Checking for nanosleep in -lrt"
+    ${check_src}
+    DIRECT
+    )
+  cmake_pop_check_state()
+  if(HAVE_NANOSLEEP)
+    set(TIMEMODULE_LIB rt)
+  endif()
+endif()
+
 endif()
 
 #######################################################################
@@ -1778,6 +1889,10 @@ if(PY_VERSION VERSION_GREATER_EQUAL "3.7")
 set(PY_COERCE_C_LOCALE ${WITH_C_LOCALE_COERCION})
 endif()
 
+if (PY_VERSION VERSION_GREATER_EQUAL "3.13")
+set(Py_GIL_DISABLED ${WITH_FREE_THREADING})
+endif()
+
 #######################################################################
 #
 # uuid tests
@@ -1838,6 +1953,7 @@ add_cond(CFG_HEADERS HAVE_NETDB_H netdb.h)
 add_cond(CFG_HEADERS HAVE_NETINET_IN_H netinet/in.h)
 add_cond(CFG_HEADERS HAVE_ARPA_INET_H arpa/inet.h)
 
+check_symbol_exists(gethostbyname   "${CFG_HEADERS}" HAVE_GETHOSTBYNAME)
 check_symbol_exists(gethostbyname_r "${CFG_HEADERS}" HAVE_GETHOSTBYNAME_R)
 if(HAVE_GETHOSTBYNAME_R)
 
@@ -1909,7 +2025,6 @@ int main() {
     endif()
   endif()
 else()
-  check_symbol_exists(gethostbyname   "${CFG_HEADERS}" HAVE_GETHOSTBYNAME)
 endif()
 
 check_symbol_exists(gai_strerror    "${CFG_HEADERS}" HAVE_GAI_STRERROR)
@@ -1918,12 +2033,16 @@ check_symbol_exists(gethostname     "${CFG_HEADERS}" HAVE_GETHOSTNAME)
 check_symbol_exists(getnameinfo     "${CFG_HEADERS}" HAVE_GETNAMEINFO)
 check_symbol_exists(gethostbyaddr   "${CFG_HEADERS}" HAVE_GETHOSTBYADDR)
 check_symbol_exists(getpeername     "${CFG_HEADERS}" HAVE_GETPEERNAME)
+check_symbol_exists(getprotobyname  "${CFG_HEADERS}" HAVE_GETPROTOBYNAME)
+check_symbol_exists(getservbyname   "${CFG_HEADERS}" HAVE_GETSERVBYNAME)
+check_symbol_exists(getservbyport   "${CFG_HEADERS}" HAVE_GETSERVBYPORT)
 check_symbol_exists(hstrerror       "${CFG_HEADERS}" HAVE_HSTRERROR)
 check_symbol_exists(inet_aton       "${CFG_HEADERS}" HAVE_INET_ATON)
 if(NOT HAVE_INET_ATON)
   check_library_exists(resolv inet_aton "" HAVE_LIBRESOLV)
 endif()
 check_symbol_exists(inet_pton       "${CFG_HEADERS}" HAVE_INET_PTON)
+check_symbol_exists(inet_ntoa       "${CFG_HEADERS}" HAVE_INET_NTOA)
 
 set(CMAKE_EXTRA_INCLUDE_FILES ${CFG_HEADERS})
 check_type_size("struct addrinfo" HAVE_ADDRINFO)
@@ -2101,6 +2220,9 @@ if(HAVE_READLINE_READLINE_H)
   check_symbol_exists(rl_completion_matches       "${CFG_HEADERS}" HAVE_RL_COMPLETION_MATCHES)
   check_symbol_exists(rl_pre_input_hook           "${CFG_HEADERS}" HAVE_RL_PRE_INPUT_HOOK)
   check_symbol_exists(rl_resize_terminal          "${CFG_HEADERS}" HAVE_RL_RESIZE_TERMINAL)
+  set(CMAKE_EXTRA_INCLUDE_FILES ${CFG_HEADERS})
+  check_type_size(rl_compdisp_func_t HAVE_RL_COMPDISP_FUNC_T)
+  unset(CMAKE_EXTRA_INCLUDE_FILES)
 
   set(CFG_HEADERS ${CFG_HEADERS_SAVE})
   cmake_pop_check_state()
@@ -2137,6 +2259,22 @@ if(HAVE_CURSES_H)
   set(CFG_HEADERS ${CFG_HEADERS_SAVE})
   cmake_pop_check_state()
 endif()
+
+#######################################################################
+#
+# libffi
+#
+#######################################################################
+cmake_push_check_state()
+set(CFG_HEADERS_SAVE ${CFG_HEADERS})
+
+set(CFG_HEADERS ${CFG_HEADERS} ffi.h)
+add_cond(CMAKE_REQUIRED_LIBRARIES USE_SYSTEM_LibFFI ${LibFFI_LIBRARY})
+check_symbol_exists(ffi_closure_alloc "${CFG_HEADERS}" HAVE_FFI_CLOSURE_ALLOC)
+check_symbol_exists(ffi_prep_cif_var      "${CFG_HEADERS}" HAVE_FFI_PREP_CIF_VAR)
+check_symbol_exists(ffi_prep_closure_loc     "${CFG_HEADERS}" HAVE_FFI_PREP_CLOSURE_LOC)
+set(CFG_HEADERS ${CFG_HEADERS_SAVE})
+cmake_pop_check_state()
 
 
 #######################################################################
@@ -2220,6 +2358,7 @@ check_type_size("uint32_t" HAVE_UINT32_T)
 check_type_size("int32_t" HAVE_INT32_T)
 if(IS_PY3)
 check_type_size("__uint128_t" HAVE_GCC_UINT128_T)
+check_type_size("__uint128_t" HAVE___UINT128_T)
 endif()
 unset(CMAKE_EXTRA_INCLUDE_FILES)
 
@@ -2326,14 +2465,18 @@ python_platform_test(
 
 # Check if the Linux getrandom() syscall is available
 set(check_src ${PROJECT_BINARY_DIR}/CMakeFiles/have_getrandom_syscall.c)
-file(WRITE ${check_src} "#include <sys/syscall.h>
-int main() {
-  char buffer[1];
-  const size_t buflen = sizeof(buffer);
-  const int flags = 0;
-  /* ignore the result, Python checks for ENOSYS at runtime */
-  (void)syscall(SYS_getrandom, buffer, buflen, flags);
-  return 0;
+file(WRITE ${check_src} "#include <stddef.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <linux/random.h>
+
+int main(void) {
+    char buffer[1];
+    const size_t buflen = sizeof(buffer);
+    const int flags = GRND_NONBLOCK;
+    /* ignore the result, Python checks for ENOSYS and EAGAIN at runtime */
+    (void)syscall(SYS_getrandom, buffer, buflen, flags);
+    return 0;
 }
 ")
 python_platform_test(

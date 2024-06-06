@@ -10,8 +10,13 @@ if(IS_PY3)
     set(PY3_ALWAYS_BUILTIN ALWAYS_BUILTIN)
 endif()
 
+if(PY_VERSION VERSION_LESS_EQUAL "3.13")
+   # TODO - this needs a better name
+   set(HAVE_DEADBATTERIES)
+endif()
+
 add_python_extension(array ${WIN32_BUILTIN} SOURCES arraymodule.c)
-add_python_extension(audioop ${WIN32_BUILTIN} REQUIRES HAVE_LIBM SOURCES audioop.c LIBRARIES ${M_LIBRARIES})
+add_python_extension(audioop ${WIN32_BUILTIN} REQUIRES HAVE_LIBM HAVE_DEADBATTERIES SOURCES audioop.c LIBRARIES ${M_LIBRARIES})
 add_python_extension(_bisect ${WIN32_BUILTIN} SOURCES _bisectmodule.c)
 add_python_extension(cmath REQUIRES HAVE_LIBM ${WIN32_BUILTIN} SOURCES $<$<VERSION_LESS:${PY_VERSION},3.11>:_math.c> cmathmodule.c LIBRARIES ${M_LIBRARIES})
 add_python_extension(_codecs_cn ${WIN32_BUILTIN} SOURCES cjkcodecs/_codecs_cn.c)
@@ -26,7 +31,7 @@ set(crypt2_NAME crypt)
 set(crypt2_SOURCES cryptmodule.c)
 set(crypt3_NAME _crypt)
 set(crypt3_SOURCES _cryptmodule.c)
-add_python_extension(${crypt${PY_VERSION_MAJOR}_NAME} REQUIRES HAVE_LIBCRYPT SOURCES ${crypt${PY_VERSION_MAJOR}_SOURCES} LIBRARIES ${HAVE_LIBCRYPT})
+add_python_extension(${crypt${PY_VERSION_MAJOR}_NAME} REQUIRES HAVE_LIBCRYPT HAVE_DEADBATTERIES SOURCES ${crypt${PY_VERSION_MAJOR}_SOURCES} LIBRARIES ${HAVE_LIBCRYPT})
 add_python_extension(cStringIO ${WIN32_BUILTIN} REQUIRES IS_PY2 SOURCES cStringIO.c)
 add_python_extension(_csv ${WIN32_BUILTIN} SOURCES _csv.c)
 add_python_extension(_ctypes_test NEVER_BUILTIN REQUIRES HAVE_LIBM SOURCES _ctypes/_ctypes_test.c LIBRARIES ${M_LIBRARIES})
@@ -83,7 +88,6 @@ if(PY_VERSION VERSION_GREATER_EQUAL "3.12")
   list(APPEND testcapi_SOURCES
     _testcapi/abstract.c
     _testcapi/buffer.c
-    _testcapi/bytearray.c
     _testcapi/bytes.c
     _testcapi/code.c
     _testcapi/codec.c
@@ -97,22 +101,36 @@ if(PY_VERSION VERSION_GREATER_EQUAL "3.12")
     _testcapi/gc.c
     _testcapi/getargs.c
     _testcapi/heaptype.c
-    _testcapi/heaptype_relative.c
     _testcapi/immortal.c
     _testcapi/list.c
     _testcapi/long.c
     _testcapi/mem.c
     _testcapi/numbers.c
-    _testcapi/pyos.c
-    _testcapi/pytime.c
     _testcapi/set.c
     _testcapi/structmember.c
-    _testcapi/sys.c
     _testcapi/tuple.c
     _testcapi/unicode.c
     _testcapi/vectorcall.c
-    _testcapi/vectorcall_limited.c
     _testcapi/watchers.c
+  )
+endif()
+if(PY_VERSION VERSION_EQUAL "3.12")
+  list(APPEND testcapi_SOURCES
+    _testcapi/bytearray.c
+    _testcapi/heaptype_relative.c
+    _testcapi/pyos.c
+    _testcapi/pytime.c
+    _testcapi/vectorcall_limited.c
+  )
+endif()
+if(PY_VERSION VERSION_GREATER_EQUAL "3.13")
+  list(APPEND testcapi_SOURCES
+    _testcapi/hash.c
+    _testcapi/monitoring.c
+    _testcapi/object.c
+    _testcapi/pyatomic.c
+    _testcapi/run.c
+    _testcapi/time.c
   )
 endif()
 if(PY_VERSION VERSION_LESS "3.12" OR UNIX)
@@ -242,7 +260,7 @@ add_python_extension(nis
 add_python_extension(posix REQUIRES UNIX ALWAYS_BUILTIN SOURCES posixmodule.c DEFINITIONS Py_BUILD_CORE)
 add_python_extension(pwd REQUIRES UNIX BUILTIN SOURCES pwdmodule.c) # this is needed to find out the user's home dir if $HOME is not set
 add_python_extension(resource REQUIRES UNIX SOURCES resource.c)
-add_python_extension(spwd REQUIRES UNIX HAVE_GETSPNAM HAVE_GETSPENT SOURCES spwdmodule.c)
+add_python_extension(spwd REQUIRES UNIX HAVE_GETSPNAM HAVE_GETSPENT HAVE_DEADBATTERIES SOURCES spwdmodule.c)
 add_python_extension(syslog REQUIRES UNIX SOURCES syslogmodule.c)
 add_python_extension(termios REQUIRES UNIX SOURCES termios.c)
 
@@ -261,7 +279,7 @@ add_python_extension(_scproxy
 
 # Linux-only extensions
 add_python_extension(linuxaudiodev REQUIRES LINUX IS_PY2 SOURCES linuxaudiodev.c)
-add_python_extension(ossaudiodev REQUIRES LINUX SOURCES ossaudiodev.c)
+add_python_extension(ossaudiodev REQUIRES LINUX HAVE_DEADBATTERIES SOURCES ossaudiodev.c)
 
 # Python 3.8: UNIX-only extensions
 if(PY_VERSION VERSION_GREATER_EQUAL "3.8")
